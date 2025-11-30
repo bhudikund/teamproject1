@@ -8,12 +8,14 @@ import ru.urfu.teamproject.Entity.AssetStatus;
 import ru.urfu.teamproject.Entity.AssetType;
 import ru.urfu.teamproject.Entity.User;
 import ru.urfu.teamproject.dto.AssetDto;
+import ru.urfu.teamproject.dto.CreateAssetRequest;
 import ru.urfu.teamproject.repository.AssetRepository;
 import ru.urfu.teamproject.repository.AssetStatusRepository;
 import ru.urfu.teamproject.repository.AssetTypeRepository;
 import ru.urfu.teamproject.repository.UserActiveRepository;
 import ru.urfu.teamproject.Entity.UserActive;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class AssetService {
     private final AssetStatusRepository statusRepository;
     private final AssetTypeRepository typeRepository;
     private final UserActiveRepository userActiveRepository;
+    private final UserService userService;
 
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -92,4 +95,54 @@ public class AssetService {
                 .map(AssetType::getName)
                 .toList();
     }
+
+    @Transactional
+    public Asset createAsset(CreateAssetRequest dto) {
+        // 1. Тип
+        AssetType type = typeRepository.findByName(dto.getType_object())
+                .orElseThrow(() -> new IllegalArgumentException("Тип актива не найден: " + dto.getType_object()));
+
+        // 2. Статус (по имени + isSoft типа)
+        AssetStatus status = statusRepository.findByNameAndIsSoft(dto.getStatus(), type.isSoft())
+                .orElseThrow(() -> new IllegalArgumentException("Статус не найден для данного типа: " + dto.getStatus()));
+
+        // 3. Создаём сам актив
+
+        assetRepository.findByInventoryNumber(dto.getInventory_number())
+                .ifPresent(a -> {
+                    throw new IllegalArgumentException(
+                            "Актив с таким инвентарным номером уже существует: " + dto.getInventory_number()
+                    );
+                });
+
+        Asset asset = Asset.builder()
+                .name(dto.getName())
+                .typeObject(type)
+                .status(status)
+                .inventoryNumber(dto.getInventory_number())
+                .serialNumber(dto.getSerial_number())
+                .description(dto.getDescription())
+                .address(dto.getAddress())
+                .dateCreate(LocalDateTime.now())
+                .build();
+
+        Asset saved = assetRepository.save(asset);
+
+        // 4. Привязка к владельцу (если указан)
+        if (dto.getOwner() != null && !dto.getOwner().isBlank()) {
+            userService.findByFullName(dto.getOwner()).ifPresent(user -> {
+                UserActive ua = UserActive.builder()
+                        .active(saved)
+                        .user(user)
+                        .isApproved(true)
+                        .build();
+                userActiveRepository.save(ua);
+            });
+        }
+
+        return saved;
+    }
+
+
+
 }

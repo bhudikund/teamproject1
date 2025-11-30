@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.urfu.teamproject.Entity.Asset;
 import ru.urfu.teamproject.Entity.User;
 import ru.urfu.teamproject.dto.*;
 import ru.urfu.teamproject.service.AssetService;
@@ -116,4 +117,35 @@ public class ApiController {
         List<String> types = assetService.getAllTypes();
         return ResponseEntity.ok(new GetAllTypesResponse(types));
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        try {
+            User user = userService.register(
+                    request.getLogin(),
+                    request.getPassword(),
+                    request.getFullName()
+            );
+            return ResponseEntity.ok(new RegisterResponse(user.getId(), user.getFullName()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new AuthErrorResponse(e.getMessage()));
+        }
+    }
+
+
+    @PostMapping("/add_active")
+    public ResponseEntity<?> addActive(@Valid @RequestBody CreateAssetRequest request) {
+        try {
+            Asset asset = assetService.createAsset(request);
+            return ResponseEntity.ok(new CreateAssetResponse("Ok", asset.getInventoryNumber()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(new AuthErrorResponse(e.getMessage()));
+        }
+    }
+
+
+
+
 }

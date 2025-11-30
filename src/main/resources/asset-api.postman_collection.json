@@ -1,20 +1,36 @@
 {
   "info": {
-    "_postman_id": "b3c9bc1f-0000-0000-0000-asset-api-demo",
+    "_postman_id": "b3c9bc1f-0000-0000-0000-asset-api-full",
     "name": "Asset API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Коллекция запросов к backend Java (assets)."
+    "description": "Полная коллекция запросов к Asset API (регистрация, создание актива, авторизация, просмотр и т.д.)"
   },
   "item": [
     {
-      "name": "1. user_verify (логин)",
+      "name": "0. register (регистрация)",
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"newuser\",\n  \"password\": \"21232f297a57a5a743894a0e4a801fc3\",\n  \"fullName\": \"Петров Пётр Петрович\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/register",
+          "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api","register"]
+        },
+        "description": "Регистрация нового пользователя."
+      },
+      "response": []
+    },
+    {
+      "name": "1. user_verify (авторизация)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
@@ -25,119 +41,102 @@
           "protocol": "http",
           "host": ["localhost"],
           "port": "8080",
-          "path": ["api", "user_verify"]
+          "path": ["api","user_verify"]
         },
-        "description": "Авторизация пользователя. Пароль передаётся в виде md5-хеша."
+        "description": "Авторизация пользователя (получение cookies user_id и username)"
       },
       "response": []
     },
     {
-      "name": "2. get_all_activites (по кукам пользователя)",
+      "name": "2. add_active (добавление актива)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Принтер HP\",\n  \"type_object\": \"Монитор\",\n  \"status\": \"На складе\",\n  \"inventory_number\": \"INV-1000\",\n  \"serial_number\": \"SN-PRN-1000\",\n  \"description\": \"Лазерный принтер\",\n  \"address\": \"Кабинет 102\",\n  \"owner\": \"Иванов Иван Иванович\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/add_active",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api","add_active"]
+        },
+        "description": "Создание нового актива + (опционально) привязка к пользователю"
+      },
+      "response": []
+    },
+    {
+      "name": "3. get_all_activites",
       "request": {
         "method": "GET",
-        "header": [],
         "url": {
           "raw": "http://localhost:8080/api/get_all_activites",
           "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "get_all_activites"]
-        },
-        "description": "Получить все активы, привязанные к пользователю из cookies (user_id / username).\nКуки выставляются запросом user_verify."
+          "host": ["localhost"], "port": "8080", "path": ["api","get_all_activites"]
+        }
       },
       "response": []
     },
     {
-      "name": "3. user_browse (активы по ФИО пользователя)",
+      "name": "4. user_browse",
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"owner\": \"Иванов Иван Иванович\"\n}"
-        },
+        "body": { "mode": "raw", "raw": "{\n  \"owner\": \"Иванов Иван Иванович\"\n}" },
         "url": {
           "raw": "http://localhost:8080/api/user_browse",
           "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "user_browse"]
-        },
-        "description": "Получить активы по ФИО пользователя."
+          "host": ["localhost"], "port": "8080", "path": ["api","user_browse"]
+        }
       },
       "response": []
     },
     {
-      "name": "4. get_all_status (статусы по типу актива)",
+      "name": "5. get_all_status",
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"type_object\": \"Монитор\"\n}"
-        },
+        "body": { "mode": "raw", "raw": "{\n  \"type_object\": \"Монитор\"\n}" },
         "url": {
           "raw": "http://localhost:8080/api/get_all_status",
           "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "get_all_status"]
-        },
-        "description": "Получить все доступные статусы для заданного типа актива."
-      },
-      "response": []
+          "host": ["localhost"], "port": "8080", "path": ["api","get_all_status"]
+        }
+      }
     },
     {
-      "name": "5. change_status (смена статуса актива)",
+      "name": "6. change_status",
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"inventory_number\": \"INV-0001\",\n  \"new_status\": \"На складе\"\n}"
-        },
+        "body": { "mode": "raw", "raw": "{\n  \"inventory_number\": \"INV-1000\",\n  \"new_status\": \"Используется\"\n}" },
         "url": {
           "raw": "http://localhost:8080/api/change_status",
           "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "change_status"]
-        },
-        "description": "Смена статуса актива по инвентарному номеру."
-      },
-      "response": []
+          "host": ["localhost"], "port": "8080", "path": ["api","change_status"]
+        }
+      }
     },
     {
-      "name": "6. get_all_type_object (все типы активов)",
+      "name": "7. get_all_type_object",
       "request": {
         "method": "GET",
-        "header": [],
         "url": {
           "raw": "http://localhost:8080/api/get_all_type_object",
           "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "get_all_type_object"]
-        },
-        "description": "Получить список всех типов активов."
-      },
-      "response": []
+          "host": ["localhost"], "port": "8080", "path": ["api","get_all_type_object"]
+        }
+      }
     }
-  ],
-  "protocolProfileBehavior": {}
+  ]
 }

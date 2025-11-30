@@ -25,4 +25,20 @@ public class UserService {
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
+
+    public User register(String login, String passwordMd5, String fullName) {
+        userRepository.findByLogin(login).ifPresent(u -> {
+            throw new IllegalArgumentException("Пользователь с таким логином уже существует");
+        });
+
+        User user = User.builder()
+                .login(login)
+                .passwordHash(passwordMd5)
+                .fullName(fullName)
+                .isWork(true)
+                .build();
+
+        return userRepository.save(user);
+    }
+
 }
