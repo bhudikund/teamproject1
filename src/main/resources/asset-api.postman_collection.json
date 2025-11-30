@@ -1,0 +1,143 @@
+{
+  "info": {
+    "_postman_id": "b3c9bc1f-0000-0000-0000-asset-api-demo",
+    "name": "Asset API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Коллекция запросов к backend Java (assets)."
+  },
+  "item": [
+    {
+      "name": "1. user_verify (логин)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"21232f297a57a5a743894a0e4a801fc3\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/user_verify",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "user_verify"]
+        },
+        "description": "Авторизация пользователя. Пароль передаётся в виде md5-хеша."
+      },
+      "response": []
+    },
+    {
+      "name": "2. get_all_activites (по кукам пользователя)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/get_all_activites",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "get_all_activites"]
+        },
+        "description": "Получить все активы, привязанные к пользователю из cookies (user_id / username).\nКуки выставляются запросом user_verify."
+      },
+      "response": []
+    },
+    {
+      "name": "3. user_browse (активы по ФИО пользователя)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"owner\": \"Иванов Иван Иванович\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/user_browse",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "user_browse"]
+        },
+        "description": "Получить активы по ФИО пользователя."
+      },
+      "response": []
+    },
+    {
+      "name": "4. get_all_status (статусы по типу актива)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type_object\": \"Монитор\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/get_all_status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "get_all_status"]
+        },
+        "description": "Получить все доступные статусы для заданного типа актива."
+      },
+      "response": []
+    },
+    {
+      "name": "5. change_status (смена статуса актива)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"inventory_number\": \"INV-0001\",\n  \"new_status\": \"На складе\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/change_status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "change_status"]
+        },
+        "description": "Смена статуса актива по инвентарному номеру."
+      },
+      "response": []
+    },
+    {
+      "name": "6. get_all_type_object (все типы активов)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/get_all_type_object",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "get_all_type_object"]
+        },
+        "description": "Получить список всех типов активов."
+      },
+      "response": []
+    }
+  ],
+  "protocolProfileBehavior": {}
+}
